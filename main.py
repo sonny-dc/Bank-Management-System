@@ -53,7 +53,6 @@ def process_transaction(prompt: str, transaction_func) -> float | None:
 
 
 def transfer_process(customer: Customer, account: SavingsAccount | CheckingAccount) -> None:
-    # Optimization: Store accounts list once to avoid creating multiple copies
     accounts = customer.accounts
     if len(accounts) <= 1:
         print("There's no account to transfer to! You only have one account!")
@@ -62,7 +61,8 @@ def transfer_process(customer: Customer, account: SavingsAccount | CheckingAccou
     print("----Transfer----")
     print("Available Accounts:")
     for acc in accounts:
-        print(f"Account ID: {acc.account_ID} ({type(acc).__name__})")
+        if acc != account:
+            print(f"Account ID: {acc.account_ID} ({type(acc).__name__})")
 
     while True:
         destination_account_ID = check_int("Enter destination account ID: ")
@@ -72,17 +72,15 @@ def transfer_process(customer: Customer, account: SavingsAccount | CheckingAccou
             print("Destination account not found.")
             continue
 
-        try:
-            account.validate_transfer_target(destination_account)
-        except ValueError as e:
-            print(f"Error: {e}")
+        if account == destination_account:
+            # Fail Fast: Block self-transfer (even if user manually types the ID)
+            print("Error: Cannot transfer to the same account.")
             continue
 
         amount = process_transaction("Enter transfer amount", lambda amt: account.transfer(destination_account, amt))
         if amount:
             print(f"Transfer of ${amount} successful!")
         
-        # Exit the transfer loop whether successful or cancelled
         break
 
 
@@ -98,7 +96,6 @@ def show_transaction_history(account: SavingsAccount | CheckingAccount) -> None:
 
 
 def choose_account(customer: Customer) -> SavingsAccount | CheckingAccount | None:
-    # Optimization: Store accounts list once
     accounts = customer.accounts
     if not accounts:
         print("No accounts available, please create one first!")
@@ -131,7 +128,6 @@ def create_checking_account(customer: Customer) -> CheckingAccount:
     while True:
         account_ID: int = check_int("Enter Checking Account ID: ")
         
-        # Optimization: Use get_account to check existence (avoids copying the list)
         if customer.get_account(account_ID):
             print(f"Account ID {account_ID} is already taken. Please try again.")
             continue

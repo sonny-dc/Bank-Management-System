@@ -3,7 +3,6 @@ from datetime import datetime
 
 
 class TransactionType(Enum):
-    # Set transaction type
     DEPOSIT = "DEPOSIT"
     WITHDRAW = "WITHDRAW"
     TRANSFER_SENT = "TRANSFER SENT"
@@ -12,11 +11,9 @@ class TransactionType(Enum):
     EXTRA_FEE = "EXTRA FEE"
 
 
-# Initiate class with Transaction type, Amount, and date
 class Transaction:
     def __init__(self, transaction_type: TransactionType, amount: float):
         
-        # Ensure we never create a transaction with invalid amounts
         if amount <= 0:
             raise ValueError("Invalid transaction amount")
         
@@ -42,6 +39,5 @@ class Transaction:
         return self._timestamp
 
     def __repr__(self) -> str:
-        # Helps with debugging: prints a readable string instead of <object at ...>
         return f"Transaction(type={self._transaction_type.name}, amount={self._amount}, time={self._timestamp})"
     

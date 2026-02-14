@@ -9,18 +9,15 @@ class Customer:
         self._email: str = email
         self._accounts: list[Account] = []
 
-    # Create an account by assigning cust id and Account instance
     def open_account(self, account: Account) -> None:
 
         account.assign_customer(self.customer_ID)
 
-        # Verify the link was established correctly
-        # Note: We access the public property .customer_ID, not the protected ._customer_ID
         assert account.customer_ID == self.customer_ID, "Account assignment failed"
         
         self._accounts.append(account)
 
-    # Get account based on acc ID input
+
     def get_account(self, account_ID: int) -> Account | None:
         for account in self._accounts:
             if account.account_ID == account_ID:
