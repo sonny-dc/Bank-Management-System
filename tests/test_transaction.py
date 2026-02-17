@@ -1,10 +1,5 @@
 import unittest
-import sys
-import os
 from datetime import datetime
-
-# Add the parent directory (project root) to sys.path
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from src import Transaction, TransactionType
 

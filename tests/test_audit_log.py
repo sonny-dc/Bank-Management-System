@@ -1,9 +1,4 @@
 import unittest
-import os
-import sys
-
-# Add the parent directory (project root) to sys.path
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from src import AuditLog, Transaction, TransactionType
 

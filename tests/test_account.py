@@ -1,20 +1,15 @@
 import unittest
-import sys
-import os
-
-# Add the parent directory (project root) to sys.path
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from src import Account
 
-# Create concere implementation of Account for testing purposes
+# Create concrete implementation of Account for testing purposes
 # We need this because we cannot instantiate the Account class directly because it is an Abstract class
 class ConcreteAccount(Account):
     """
     A concrete implementation of the abstract Account class.
     Used solely for testing shared logic like transfers and customer assignment.
     """
-    def withdraw(self, amount: float) -> None:
+    def _withdraw_helper(self, amount: float, transaction) -> None:
         if amount > self._balance:
             raise ValueError("Insufficient funds")
         self._balance -= amount
@@ -62,7 +57,6 @@ class TestAccount(unittest.TestCase):
 
         with self.assertRaises(ValueError):
             self.acc1.transfer(self.acc2, 200.0)
-
 
         self.assertEqual(self.acc1.balance, 100.0)
         self.assertEqual(self.acc2.balance, 0.0)
