@@ -1,11 +1,6 @@
 import unittest
 from unittest.mock import patch, MagicMock
 from io import StringIO
-import sys
-import os
-
-# Add the parent directory (project root) to sys.path so we can import main
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 import main
 from src import Customer, SavingsAccount, CheckingAccount
@@ -142,6 +137,47 @@ class TestMain(unittest.TestCase):
         acc = SavingsAccount(1)
         main.show_transaction_history(acc)
         self.assertIn("No transaction history available", mock_stdout.getvalue())
+
+    # ==========================
+    # Test Account Creation & Selection
+    # ==========================
+
+    @patch('builtins.input', side_effect=['101'])
+    def test_create_checking_account(self, mock_input):
+        """Test creating a checking account."""
+        cust = Customer(1, "Test", "User", "test@test.com")
+        acc = main.create_checking_account(cust)
+        self.assertIsInstance(acc, CheckingAccount)
+        self.assertEqual(acc.account_ID, 101)
+
+    @patch('builtins.input', side_effect=['202'])
+    def test_create_savings_account(self, mock_input):
+        """Test creating a savings account."""
+        cust = Customer(1, "Test", "User", "test@test.com")
+        acc = main.create_savings_account(cust)
+        self.assertIsInstance(acc, SavingsAccount)
+        self.assertEqual(acc.account_ID, 202)
+
+    @patch('builtins.input', side_effect=['101'])
+    @patch('sys.stdout', new_callable=StringIO)
+    def test_choose_account_valid(self, mock_stdout, mock_input):
+        """Test choosing an existing account."""
+        cust = Customer(1, "Test", "User", "test@test.com")
+        acc = CheckingAccount(101)
+        cust.open_account(acc)
+        
+        result = main.choose_account(cust)
+        self.assertEqual(result, acc)
+
+    @patch('builtins.input', side_effect=['s', '303'])
+    def test_open_account_savings(self, mock_input):
+        """Test opening a savings account via the menu."""
+        cust = Customer(1, "Test", "User", "test@test.com")
+        main.open_account(cust)
+        
+        self.assertEqual(len(cust.accounts), 1)
+        self.assertIsInstance(cust.accounts[0], SavingsAccount)
+        self.assertEqual(cust.accounts[0].account_ID, 303)
 
 if __name__ == '__main__':
     unittest.main()
